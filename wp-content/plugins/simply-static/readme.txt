@@ -2,9 +2,9 @@
 Contributors: patrickposner
 Tags: HTML, static website generator, static site, secure, fast
 Requires at least: 5.4
-Tested up to: 5.8
+Tested up to: 6.0
 Requires PHP: 7.4
-Stable tag: 2.1.5.3
+Stable tag: 2.1.5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,22 @@ Develop your site locally and only push the static exported website on a server.
 * [lando](https://docs.lando.dev/)
 
 I highly recommend not to use another tool for local development if you are not a programmer as in most cases manual package installation is required.
+
+
+== Simply CDN ==
+
+[Simply CDN](https://simplycdn.io) is the simplest way to bring your Simply Static generated static website online.
+
+You can easily export your static website directly from Simply Static to Simply CDN.
+
+Simply CDN will optimize your static website for the best performance and security without technical challenges.
+
+Take your WordPress website offline and manage it from your local computer with tools like [LocalWP](https://localwp.com/) and host your static website with Simply CDN.
+
+It will also send all form submissions to your configured e-mail address - there is no reason not to shut down your WordPress website anymore.
+
+What can go wrong with the 7-day free trial and the detailed [documentation](https://simplycdn.io/documentation)?
+
 
 == Simply Static Pro ==
 
@@ -103,6 +119,15 @@ Enable comments on your static website without the requirement of Third-Party-Pr
 After a comment was submitted, Simply Static automatically exports a new static version of the post. You don't have to do anything.
 
 Learn more about that [here](https://patrickposner.dev/docs/simply-static/search)
+
+= Multilingual =
+
+Simply Static Pro enables you to export multilingual websites build with WPML, Polylang, or Translatepress.
+
+Configure settings per language, export languages individually or all languages at once.
+
+You can even use the built-in language switchers from the most popular translation plugins without modifications.
+
 
 = Get the Pro version =
 
@@ -174,6 +199,37 @@ Simply Static creates a static copy of your WordPress site that is intended to b
 3. Diagnostics
 
 == Changelog ==
+
+= 2.1.5.8 =
+
+* added SSL to diagnostics
+* added filter for origin URL
+* increased general ping time
+* Windows support: replacing paths
+
+= 2.1.5.7 =
+
+* http_request_args filter added for better performance with Basic Authentication
+* Windows compatibility fix for path conversion
+* reverted delete local directory for local dir exports (original merge request)
+* added filter for options getter
+* cleaned up WP Cron conditional
+
+= 2.1.5.6 =
+
+* fixed non-valid HTML character error
+* UI improvement for running static exports
+* better http_request_args filter usage
+* ss_before_static_export action added
+* udpdated dependencies
+
+= 2.1.5.5 =
+
+* cleaned up upgrade handler
+
+= 2.1.5.4 =
+
+* reverted meta tags in extraction
 
 = 2.1.5.3 =
 

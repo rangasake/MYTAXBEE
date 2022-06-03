@@ -30,7 +30,8 @@ $extensions = [
 				'title'     => __( 'Content Protection', 'essential-addons-for-elementor-lite' ),
 				'demo_link' => 'https://essential-addons.com/elementor/content-protection/',
 				'doc_link'  => 'https://essential-addons.com/elementor/docs/ea-content-protection/',
-				'is_pro'    => true
+				'is_pro'    => true,
+				'promotion' => 'popular'
 			],
 			[
 				'key'       => 'reading-progress',
@@ -43,6 +44,7 @@ $extensions = [
 				'title'     => __( 'Table of Contents', 'essential-addons-for-elementor-lite' ),
 				'demo_link' => 'https://essential-addons.com/elementor/table-of-content/',
 				'doc_link'  => 'https://essential-addons.com/elementor/docs/table-of-content',
+				'promotion' => 'popular'
 			],
 			[
 				'key'       => 'post-duplicator',
@@ -56,19 +58,30 @@ $extensions = [
 				'title'     => __( 'Custom JS', 'essential-addons-for-elementor-lite' ),
 				'demo_link' => 'https://essential-addons.com/elementor/custom-js/',
 				'doc_link'  => 'https://essential-addons.com/elementor/docs/custom-js/',
+				'promotion' => 'popular'
 			],
 			[
 				'key'       => 'xd-copy',
 				'title'     => __( 'Cross-Domain Copy Paste', 'essential-addons-for-elementor-lite' ),
 				'demo_link' => 'https://essential-addons.com/elementor/cross-domain-copy-paste/',
 				'doc_link'  => 'https://essential-addons.com/elementor/docs/cross-domain-copy-paste/',
-				'is_pro'    => true
+				'is_pro'    => true,
+				'promotion' => 'new'
 			],
 			[
 				'key'       => 'scroll-to-top',
 				'title'     => __( 'Scroll to Top', 'essential-addons-for-elementor-lite' ),
 				'demo_link' => 'https://essential-addons.com/elementor/scroll-to-top/',
 				'doc_link'  => 'https://essential-addons.com/elementor/docs/scroll-to-top/',
+				'promotion' => 'new'
+			],
+			[
+				'key'       => 'conditional-display',
+				'title'     => __( 'Conditional Display', 'essential-addons-for-elementor-lite' ),
+				'demo_link' => 'https://essential-addons.com/elementor/conditional-display/',
+				'doc_link'  => 'https://essential-addons.com/elementor/docs/conditional-display/',
+				'is_pro'    => true,
+				'promotion' => 'new'
 			],
 		]
 	]
@@ -100,15 +113,13 @@ $extensions = [
         <div class="eael-section mb50">
             <h3 class="eael-section__header"><?php echo esc_html( $element[ 'title' ] ) ?></h3>
             <div class="eael-element__wrap">
-				<?php foreach ( $element[ 'extensions' ] as $item ): ?>
-                    <div class="eael-element__item ">
-						<?php if ( !empty( $item[ 'is_pro' ] ) && !$this->pro_enabled ): ?>
-                            <div class="isPro">
-                                <span><?php esc_html_e( 'Pro', 'essential-addons-for-elementor-lite' ); ?></span>
-                            </div>
-						<?php endif; ?>
+	            <?php foreach ( $element[ 'extensions' ] as $item ): ?>
+		            <?php
+		            $promotion_class = ! empty( $item['promotion'] ) ? sprintf( "eael-promotion-is%s", $item['promotion'] ) : "";
+		            ?>
+                    <div class="eael-element__item <?php esc_attr_e($promotion_class); ?>">
                         <div class="element__content">
-                            <h4><?php echo $item[ 'title' ]; ?></h4>
+                            <h4><?php echo esc_html( $item[ 'title' ] ); ?></h4>
                             <div class="element__options">
 
 	                            <?php
@@ -116,7 +127,7 @@ $extensions = [
 		                            $link = !empty( $item[ 'setting' ][ 'link' ] ) ? $item[ 'setting' ][ 'link' ] : '#';
 		                            $id = !empty( $item[ 'setting' ][ 'id' ] ) ? $item[ 'setting' ][ 'id' ] : '';
 		                            ?>
-                                    <a href="<?php echo $link; ?>" id="<?php echo $id; ?>" class="element__icon">
+                                    <a href="<?php echo esc_url( $link ); ?>" id="<?php echo esc_attr( $id ); ?>" class="element__icon">
                                         <i class="ea-admin-icon icon-gear"></i>
                                         <span class="tooltip-text"><?php esc_html_e( 'Setting', 'essential-addons-for-elementor-lite' ); ?></span>
                                     </a>
@@ -137,8 +148,9 @@ $extensions = [
                                            type="checkbox" %2$s>', $item[ 'key' ], $status );
 									?>
 
-                                    <span class="switch__box <?php echo $disabled; ?>"></span>
+                                    <span class="switch__box <?php echo esc_attr( $disabled ); ?>"></span>
                                 </label>
+	                            <?php printf( "%s", ( $disabled == 'disabled') ? '<i class="ea-admin-icon icon-lock-alt eael-lock-style"></i>' : '' ); ?>
                             </div>
                         </div>
                     </div>

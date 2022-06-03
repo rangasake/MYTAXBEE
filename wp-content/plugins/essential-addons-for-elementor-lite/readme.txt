@@ -2,9 +2,9 @@
 Contributors: wpdevteam, Codetic, re_enter_rupok, Asif2BD, priyomukul, manzurahammed, sumaiyasiddika, rudlinkon, robinwpdeveloper
 Tags: elementor, elements, addons, elementor addons, elementor widget, elementor form, woocommerce elementor, page builder, builder, visual editor, wordpress page builder
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 5.0.1
+Stable tag: 5.1.4
 License: GPLv3
 License URI: https://opensource.org/licenses/GPL-3.0
 
@@ -28,7 +28,7 @@ No extra resources or messy codes to slow down your website. Optimized for super
 Enable and disable individual elements to make your page loading faster and smoother. You can deactivate unnecessary widgets to keep the site lite.
 
 
-### 1700+ Ready Blocks and Templates through **Templately**
+### 2000+ Ready Blocks and Templates through **Templately**
 Use pre-made templates and sections which come with Essential Addons and design your website to stand out from the crowd.
 
 [Install Templately to get the premade blocks and templates](https://wordpress.org/plugins/templately/)
@@ -143,7 +143,8 @@ Extensions (Pro):
 2. [Particles](https://essential-addons.com/elementor/particle-effect/) - Add animated particle effects to your content
 3. [Advanced Tooltip](https://essential-addons.com/elementor/advanced-tooltip/) - Make any widget more informative with tooltip
 4. [Content Protection](https://essential-addons.com/elementor/content-protection/) - Hide your content with password protection
-5. [Cross-Domain Copy Paste](https://essential-addons.com/elementor/cross-domain-copy-paste/)- Copy any section in Elementor from one website and paste it on another 
+5. [Cross-Domain Copy Paste](https://essential-addons.com/elementor/cross-domain-copy-paste/)- Copy any section in Elementor from one website and paste it on another
+6. [Conditional Display](https://essential-addons.com/elementor/conditional-display/)- Display your preferred content based on the logic conditions you have set  
 
 
 More features and improvements are coming on regular updates. Want to unlock the advanced elements? [Upgrade to our Pro version](https://essential-addons.com/elementor/#pricing)
@@ -154,7 +155,7 @@ More features and improvements are coming on regular updates. Want to unlock the
 **WP Mayor:** “If you use Elementor, Essential Addons is a great way to expand your library of available widgets without slowing your site down.” 
 **WP Pagebuilders:** “With 60+ additional widgets, Essential Addons is a great add-on to enhance your experience in building a website with WordPress+Elementor.” 
 **MonsterPost:** “Essential Addons for Elementor has the largest number of active users among all third-party extensions on the market. The widgets are tested in all popular web browsers to ensure full browser compatibility for all elements.” 
-**WPCrafer:** WordPress influencer Adam Preiser did a Speed Test & found Essential Addons for Elementor is the fastest solution out there 👇
+**WPCrafter:** WordPress influencer Adam Preiser did a Speed Test & found Essential Addons for Elementor is the fastest solution out there 👇
 
 https://www.youtube.com/watch?v=K9BssSV-KC8
 
@@ -240,6 +241,160 @@ Your existing elements/content will work with premium version. So you won't lose
 
 
 == Changelog ==
+
+= 5.1.4 - 26/05/2022 =
+
+- Improved: Data escaping for Security Enhancement
+- Few minor bug fixes & improvements
+
+= 5.1.3 - 25/05/2022 =
+
+- Added: WordPress 6.0 Compatibility
+- Improved: Sanitized HTML Tags in the WooCommerce Widgets
+- Improved: EA Woo Product Carousel | Options to make product title clickable
+- Improved: EA Interactive Circle | Animation starting after scrolling to a definite section
+- Added: EA Login/Register Form| Social Login option for Register Form
+- Added: EA Facebook Feed | Force square image option
+- Added: EA Simple Menu | Customized Icon for the hamburger menu
+- Fixed: EA Scroll to Top | being visible on all pages and posts despite only selected only All posts
+- Fixed: EA Pricing Table | Feature List icon color not changing when using global color
+- Fixed: Conflict with Elementor Product Grid when Martfury theme is used
+- Fixed: EA Woo Checkout | some of the strings not being translatable
+- Fixed: EA Woo Product Gallery | Showing No categories found error despite categories option being disabled
+- Fixed: EA Feature List | Images looking blurry regardless of the resolution and size
+- Fixed: EA Flip Box | Title & Button links not working without "https://"
+- Fixed: EA Product Grid | Sale text not changing in the Quick View pop up 
+- Fixed: EA Product Grid | Quick View style changing when going to next page through pagination
+- Fixed: EA Product Grid | Add to Cart behavior to Cart Page not working from Quick View screen
+- Fixed: EA Post Grid | Throwing error when posts per page is blank
+- Fixed: EA Login/Register Form | Custom Email Formatting and Reset Password link not working
+- Fixed: WooCommerce Quick View being broken when Savoy theme is used
+- Fixed: EA Advanced Data Table | Google sheet merged cell not formatting properly
+- Few minor bug fixes & improvements
+
+= 5.1.2 - 10/05/2022 =
+
+- Fixed: EA Woo Product Gallery | Quick view not working properly on responsive devices
+- Few minor bug fixes & improvements
+
+= 5.1.1 - 26/04/2022 =
+
+- Fixed: EA Advanced Data Table | WPML Translation not working
+- Fixed: EA Creative Button | Style settings not apply on secondary button texts
+- Fixed: EA Advanced Data Table | Sorting order only working on the current page
+- Improved: EA Event Calendar | Added an option to specify default start date
+- Few minor bug fixes & improvements
+
+= 5.1.0 - 19/04/2022 =
+
+- Added: FAQ Schema for EA Advanced Accordion
+- Few minor bug fixes & improvements
+
+= 5.0.13 - 12/04/2022 =
+
+- Fixed: EA Twitter Feed | Latest feed data not showing automatically
+- Few minor bug fixes & improvements
+
+= 5.0.12 - 27/03/2022 =
+
+- Fixed: EA Filterable Gallery | Filter options not working with Multiple Controls for items
+- Fixed: EA Call to Action | Border style and Border radius options not showing in the Primary button style
+- Few minor bug fixes & improvements
+
+= 5.0.11 - 23/03/2022 =
+
+- Fixed: “_register_controls is deprecated” error
+- Added: Compatibility with Elementor 3.6.0
+- Improved: EA Advanced Tabs | Added Areal Label markup
+- Improved: EA Product Grid | YITH WooCommerce Wishlist support
+- Improved: Refactored AJAX requests for performance improvement
+- Fixed: EA Filterable Gallery | not working when special characters are used
+- Fixed: EA Woo Checkout | “Shipping” text not being translatable
+- Fixed: EA Reading Progress Bar | global color not working
+- Fixed: EA Event Calendar | Event Details popup not working with Jupiter X theme
+- Fixed: EA Gravity Forms | Title and Description alignment not working
+- Fixed: EA Post Timeline |  Title tag, image height & text color not working
+- Few minor bug fixes & improvements
+
+= 5.0.10 - 08/03/2022 =
+
+- Fixed: EA Event Calendar | Event details text not showing
+- Fixed: EA Woo Product Grid & Carousel | HTML tags not working for Product Title
+- Fixed: EA Advanced Data Table | Elementor panel showing blank
+- Fixed: EA Twitter Feed | Added option to clear cache to refresh feed
+- Improved: EA Call to Action | Added Overlay color change options
+- Improved: EA Facebook Feed | Added option to fetch from both feed & posts
+- Few minor bug fixes & improvements
+
+= 5.0.9 - 17/02/2022 =
+
+- Improved: Data sanitization and escaping for Security Enhancement
+- Few minor bug fixes & improvements
+
+= 5.0.8 - 16/02/2022 =
+
+- Improved: Optimized Options table for better performance
+- Fixed: Deprecated control error notices from Elementor
+- Fixed: Assets not loading if parameter is added in the link
+- Fixed: EA Pricing Table | Ribbon style showing despite being deactivated
+- Fixed: EA Advanced Tabs | SVG icon height issue
+- Fixed: EA Product Grid | Image size not changing
+- Fixed: EA Woo Product Slider | Some Style options not working properly
+- Fixed: EA Interactive Circle | Border style changing in mobile view
+- Fixed: EA Countdown | Showing different time in different time zones
+- Fixed: EA Woo Product Carousel | Compatibility issue with the Betheme
+- Fixed: EA Sticky Video | Conflict with Tutor LMS YouTube player
+- Fixed: EA Dual Color Heading | Global Color not working when the gradient color is selected
+- Fixed: EA Event Calendar | All Data not showing for The Event Calendar plugin
+- Few minor bug fixes & improvements
+
+= 5.0.7 - 07/02/2022 =
+
+- Improved: Data escaping for Security Enhancement
+- Few minor bug fixes & improvements
+
+= 5.0.6 - 02/02/2022 =
+
+- Improved: Data sanitization, validation & escaping for Security Enhancement
+- Fixed: JS error when Anchor tags are used without the href attribute
+- Fixed: EA Product Grid | Product Grid thumbnails not using the image size selected
+- Fixed: EA Woo Product Carousel | not fetching the variable products when Sale Items option is selected
+- Few minor bug fixes & improvements
+
+= 5.0.5 - 28/01/2022 =
+
+- Improved: Enhanced Security to prevent inclusion of unwanted file form remote server through ajax request
+
+= 5.0.4 - 27/01/2022 =
+
+- Improved: Sanitized template file paths for Security Enhancement
+- Added: Support for new Capability Queries for WordPress 5.9
+- Fixed: Elementor Popups not being triggered
+- Few minor bug fixes & improvements
+
+= 5.0.3 - 25/01/2022 =
+
+- Fixed: Parameter sanitization in dynamic widgets
+- Fixed EA Advanced Accordion & Tabs | Custom ID Anchor not working with links on same page
+- Fixed: EA Interactive Card rear panel scrolling not working inside EA Advanced Tabs 
+- Fixed: EA Woo Cart | Last item not getting removed from Cart
+- Fixed: EA Interactive Circle | Global Color not working on Items
+- Added: EA Woo Checkout | Option for hiding the coupon code
+- Few minor bug fixes & improvements
+
+= 5.0.2 - 19/01/2022 =
+
+- Improved: EA Duplicator | Security Enhancement
+- Fixed: EA Call to Action | Throwing fatal error when saved template is chosen as content type
+- Fixed: EA Countdown | Throwing warning on PHP 8.0
+- Fixed: EA Advanced Tabs | Anchor link not working with when used within the same page
+- Fixed: EA Sticky Video | Throwing undefined offset error
+- Fixed: EA Woo Checkout | Throwing error notice when Cart Summary is updated
+- Fixed: EA Table of Contents | Not working on Archive pages
+- Fixed: EA Interactive Circle | Not translating with WPML
+- Improved: EA Call to Action | Added option to upload Background image
+- Improved: EA Woo Cart | Option to change Empty Cart text
+- Few minor bug fixes & improvements
 
 = 5.0.1 - 30/12/2021 =
 

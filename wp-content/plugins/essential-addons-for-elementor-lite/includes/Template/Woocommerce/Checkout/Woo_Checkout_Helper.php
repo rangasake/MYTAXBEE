@@ -251,9 +251,9 @@ trait Woo_Checkout_Helper {
 	 */
 	public static function ea_coupon_template() {
         $settings = self::ea_get_woo_checkout_settings();
-        if(get_option('woocommerce_enable_coupons')==='no'){
-            return ;
-        }
+		if ( get_option( 'woocommerce_enable_coupons' ) === 'no' || $settings['ea_woo_checkout_coupon_hide'] === 'yes' ) {
+			return;
+		}
 		?>
 		<div class="woo-checkout-coupon">
 			<div class="ea-coupon-icon">
@@ -414,7 +414,9 @@ trait Woo_Checkout_Helper {
 									?>
 								</div>
 								<div class="product-name">
-									<?php echo apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									<?php $name = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+									echo CheckoutHelperCLass::eael_wp_kses( $name );
+									?>
 									<?php if( $settings['ea_woo_checkout_layout'] == 'split' || $settings['ea_woo_checkout_layout'] == 'multi-steps' ) {
 									    echo apply_filters( 'woocommerce_checkout_cart_item_quantity', ' <strong class="product-quantity">' . sprintf( '&times;&nbsp;%s', $cart_item['quantity'] ) . '</strong>', $cart_item, $cart_item_key );
 									} // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -440,7 +442,7 @@ trait Woo_Checkout_Helper {
 
 			<div class="ea-order-review-table-footer">
                 <!-- Show default text (from woocommerce) if change label control (ea_woo_checkout_table_header_text) is off  -->
-                <?php $woo_checkout_order_details_change_label_settings = CheckoutHelperCLass::eael_wp_kses($settings['ea_woo_checkout_table_header_text'])  ?>
+                <?php $woo_checkout_order_details_change_label_settings = !empty($settings['ea_woo_checkout_table_header_text']) ? CheckoutHelperCLass::eael_wp_kses($settings['ea_woo_checkout_table_header_text']) : '';  ?>
 
                 <?php
 				if($settings['ea_woo_checkout_shop_link'] == 'yes') { ?>

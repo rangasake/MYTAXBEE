@@ -74,7 +74,7 @@ class Facebook_Feed extends Widget_Base
         ];
     }
 
-    protected function _register_controls()
+    protected function register_controls()
     {
         $this->start_controls_section(
             'eael_section_facebook_feed_settings_account',
@@ -105,6 +105,21 @@ class Facebook_Feed extends Widget_Base
                 'description' => __('<a href="https://essential-addons.com/elementor/docs/facebook-feed/" class="eael-btn" target="_blank">Get Access Token</a>', 'essential-addons-for-elementor-lite'),
             ]
         );
+
+	    $this->add_control(
+		    'eael_facebook_feed_data_source',
+		    [
+			    'label' => esc_html__('Source', 'essential-addons-for-elementor-lite'),
+			    'type' => Controls_Manager::SELECT,
+			    'label_block' => true,
+			    'options' => [
+				    'posts' => esc_html__('Posts', 'essential-addons-for-elementor-lite'),
+				    'feed' => esc_html__('Feed', 'essential-addons-for-elementor-lite'),
+			    ],
+			    'default' => 'posts',
+
+		    ]
+	    );
 
 	    $this->add_control(
 		    'eael_facebook_feed_cache_limit',
@@ -153,6 +168,59 @@ class Facebook_Feed extends Widget_Base
                         'max' => 100,
                     ],
                 ],
+            ]
+        );
+
+        $this->add_control(
+            'eael_facebook_feed_force_square_img',
+            [
+                'label' => esc_html__('Force Square Image ?', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SWITCHER,
+                'return_value' => 'yes',
+                'default' => 'no',
+            ]
+        );
+
+        $this->add_control(
+            'eael_facebook_feed_image_render_type',
+            [
+                'label' => esc_html__('Image Render Type', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SELECT,
+                'options' => [
+                    'fill' => esc_html__('Stretched', 'essential-addons-for-elementor-lite'),
+                    'cover' => esc_html__('Cropped', 'essential-addons-for-elementor-lite'),
+                ],
+                'default' => 'fill',
+                'condition' => [
+                    'eael_facebook_feed_force_square_img' => 'yes'
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .eael-facebook-feed-square-image .eael-facebook-feed-item img.eael-facebook-feed-img' => 'object-fit: {{VALUE}};'
+                ]
+            ]
+        );
+
+        $this->add_responsive_control(
+            'eael_facebook_feed_image_dimension',
+            [
+                'label' => esc_html__('Image Dimension (px)', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SLIDER,
+                'default' => [
+                    'size' => '400',
+                ],
+                'range' => [
+                    'px' => [
+                        'min' => 10,
+                        'max' => 1000,
+                        'step'=> 5
+                    ],
+                ],
+                'condition' => [
+                    'eael_facebook_feed_force_square_img' => 'yes'
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .eael-facebook-feed-square-image .eael-facebook-feed-item img.eael-facebook-feed-img' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}};'
+                ]
             ]
         );
 
@@ -991,7 +1059,7 @@ class Facebook_Feed extends Widget_Base
                 ],
                 'condition' => [
                     'eael_facebook_feed_layout' => 'card',
-                ],
+                ]
             ]
         );
 
@@ -1174,6 +1242,11 @@ class Facebook_Feed extends Widget_Base
             ],
             'id' => 'eael-facebook-feed-' . esc_attr($this->get_id()),
         ]);
+
+        if ( isset( $settings['eael_facebook_feed_force_square_img'] ) && 'yes' == $settings['eael_facebook_feed_force_square_img'] ) {
+            $this->add_render_attribute('fb-wrap', 'class', 'eael-facebook-feed-square-image');
+        }
+
         $this->add_render_attribute('load-more', [
             'class' => "eael-load-more-button",
             'id' => "eael-load-more-btn-" . $this->get_id(),

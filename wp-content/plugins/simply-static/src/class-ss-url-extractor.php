@@ -32,7 +32,6 @@ class Url_Extractor {
 		'source'       => array( 'srcset' ),
 		'amp-img'      => array( 'src', 'srcset' ),
 		'link'         => array( 'href' ),
-		'meta'         => array( 'content' ),
 
 		'applet'       => array( 'code', 'codebase', 'archive', 'object' ),
 		'area'         => array( 'href' ),
@@ -286,8 +285,8 @@ class Url_Extractor {
 			$tags = $dom->find( 'style' );
 
 			foreach ( $tags as $tag ) {
-				$updated_css = $this->extract_and_replace_urls_in_css( $tag->innertext );
-				$tag->innertext = $updated_css;
+				$updated_css = $this->extract_and_replace_urls_in_css( $tag->innerhtmlKeep );
+				$tag->innerhtmlKeep = $updated_css;
 			}
 
 			do_action(

@@ -132,6 +132,28 @@ trait Controls
                     ],
                 ]
             );
+
+            $show_child_cat_control = ('category' === $taxonomy || 'product_cat' === $taxonomy) ? 1 : 0;
+            $is_element_dynamic_gallery = 'eael-dynamic-filterable-gallery' === $wb->get_name() ? 1 : 0;
+            
+            if($show_child_cat_control && $is_element_dynamic_gallery){
+                $wb->add_control(
+                    $taxonomy . '_show_child_items',
+                    [
+                        'label' => __('Show Child Category Items', 'essential-addons-for-elementor-lite'),
+                        'type' => Controls_Manager::SWITCHER,
+                        'label_on' => __('Yes', 'essential-addons-for-elementor-lite'),
+                        'label_off' => __('No', 'essential-addons-for-elementor-lite'),
+                        'return_value' => 'yes',
+                        'default' => 'no',
+                        'condition' => [
+                            $taxonomy . '_ids!' => '',
+                            'post_type' => $object->object_type,
+                        ],
+                    ]
+                );
+            }
+
         }
 
 	    $wb->add_control(
@@ -988,7 +1010,6 @@ trait Controls
 
         if ( 'eael-post-carousel' === $wb->get_name() || 'eael-post-grid' === $wb->get_name() ) {
 
-//	        $eael_show_post_terms_condition = 'eael-post-grid' === $wb->get_name() ? ['eael_show_image' => 'yes'] : [];
 	        $eael_show_post_terms_condition = ['eael_show_image' => 'yes']; //Applicable for both elements: Post Carousel and Post Grid
 
             $wb->add_control(

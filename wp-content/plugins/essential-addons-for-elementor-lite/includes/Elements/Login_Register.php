@@ -191,7 +191,7 @@ class Login_Register extends Widget_Base {
 	/**
 	 * @inheritDoc
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		/*----Content Tab----*/
 		do_action( 'eael/login-register/before-content-controls', $this );
 		$this->init_content_general_controls();
@@ -4241,6 +4241,8 @@ class Login_Register extends Widget_Base {
                                     </div>
 								<?php } ?>
                             </div>
+
+							<?php do_action( 'eael/login-register/after-register-footer', $this ); ?>
 
                             <div class="eael-form-validation-container">
 								<?php $this->print_validation_message(); ?>

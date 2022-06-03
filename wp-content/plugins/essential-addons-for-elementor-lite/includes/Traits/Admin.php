@@ -17,9 +17,12 @@ trait Admin {
      * @since 1.1.2
      */
     public function admin_menu() {
+
+	    $menu_notice = ( $this->menu_notice_should_show() ) ?'<span class="eael-menu-notice">1</span>':'';
+
         add_menu_page(
-            __( 'Essential Addons', 'essential-addons-for-elementor-lite' ),
-            __( 'Essential Addons', 'essential-addons-for-elementor-lite' ),
+            __( 'Essential Addons a', 'essential-addons-for-elementor-lite' ),
+            sprintf(__( 'Essential Addons %s', 'essential-addons-for-elementor-lite' ), $menu_notice ),
             'manage_options',
             'eael-settings',
             [$this, 'admin_settings_page'],
@@ -84,6 +87,8 @@ trait Admin {
                 'assets_regenerated' => EAEL_PLUGIN_URL . 'assets/admin/images/assets-regenerated.gif',
             ) );
         }
+
+        $this->eael_admin_inline_css();
     }
 
     /**
@@ -92,7 +97,6 @@ trait Admin {
      * @since 1.1.2
      */
     public function admin_settings_page() {
-        $a = 'manzur';
         ?>
         <form action="" method="POST" id="eael-settings" name="eael-settings">
             <div class="template__wrapper background__greyBg px30 py50">
@@ -126,6 +130,7 @@ trait Admin {
             </div>
         </form>
         <?php
+	    do_action( 'eael_admin_page_setting' );
     }
 
     /**
@@ -134,103 +139,7 @@ trait Admin {
      * @return  array
      * @since 1.1.2
      */
-    public function save_settings() {
-        check_ajax_referer( 'essential-addons-elementor', 'security' );
 
-        if(!current_user_can('manage_options')){
-            wp_send_json_error(__('you are not allowed to do this action', 'essential-addons-for-elementor-lite'));
-        }
-
-        if ( !isset( $_POST[ 'fields' ] ) ) {
-            return;
-        }
-
-        parse_str( $_POST[ 'fields' ], $settings );
-
-        if ( !empty( $_POST[ 'is_login_register' ] ) ) {
-            // Saving Login | Register Related Data
-            if ( isset( $settings[ 'recaptchaSiteKey' ] ) ) {
-                update_option( 'eael_recaptcha_sitekey', sanitize_text_field( $settings[ 'recaptchaSiteKey' ] ) );
-            }
-            if ( isset( $settings[ 'recaptchaSiteSecret' ] ) ) {
-                update_option( 'eael_recaptcha_secret', sanitize_text_field( $settings[ 'recaptchaSiteSecret' ] ) );
-            }
-            if ( isset( $settings[ 'recaptchaLanguage' ] ) ) {
-                update_option( 'eael_recaptcha_language', sanitize_text_field( $settings[ 'recaptchaLanguage' ] ) );
-            }
-
-            //pro settings
-            if ( isset( $settings[ 'gClientId' ] ) ) {
-                update_option( 'eael_g_client_id', sanitize_text_field( $settings[ 'gClientId' ] ) );
-            }
-            if ( isset( $settings[ 'fbAppId' ] ) ) {
-                update_option( 'eael_fb_app_id', sanitize_text_field( $settings[ 'fbAppId' ] ) );
-            }
-            if ( isset( $settings[ 'fbAppSecret' ] ) ) {
-                update_option( 'eael_fb_app_secret', sanitize_text_field( $settings[ 'fbAppSecret' ] ) );
-            }
-
-            wp_send_json_success( [ 'message' => __( 'Login | Register Settings updated', 'essential-addons-for-elementor-lite' ) ] );
-        }
-
-        //Login-register data
-	    if ( isset( $settings[ 'lr_recaptcha_sitekey' ] ) ) {
-		    update_option( 'eael_recaptcha_sitekey', sanitize_text_field( $settings[ 'lr_recaptcha_sitekey' ] ) );
-	    }
-	    if ( isset( $settings[ 'lr_recaptcha_secret' ] ) ) {
-		    update_option( 'eael_recaptcha_secret', sanitize_text_field( $settings[ 'lr_recaptcha_secret' ] ) );
-	    }
-	    if ( isset( $settings[ 'lr_recaptcha_language' ] ) ) {
-		    update_option( 'eael_recaptcha_language', sanitize_text_field( $settings[ 'lr_recaptcha_language' ] ) );
-	    }
-
-	    //pro settings
-	    if ( isset( $settings[ 'lr_g_client_id' ] ) ) {
-		    update_option( 'eael_g_client_id', sanitize_text_field( $settings[ 'lr_g_client_id' ] ) );
-	    }
-	    if ( isset( $settings[ 'lr_fb_app_id' ] ) ) {
-		    update_option( 'eael_fb_app_id', sanitize_text_field( $settings[ 'lr_fb_app_id' ] ) );
-	    }
-	    if ( isset( $settings[ 'lr_fb_app_secret' ] ) ) {
-		    update_option( 'eael_fb_app_secret', sanitize_text_field( $settings[ 'lr_fb_app_secret' ] ) );
-	    }
-
-        // Saving Google Map Api Key
-        if ( isset( $settings[ 'google-map-api' ] ) ) {
-            update_option( 'eael_save_google_map_api', sanitize_text_field( $settings[ 'google-map-api' ] ) );
-        }
-
-        // Saving Mailchimp Api Key
-        if ( isset( $settings[ 'mailchimp-api' ] ) ) {
-            update_option( 'eael_save_mailchimp_api', sanitize_text_field( $settings[ 'mailchimp-api' ] ) );
-        }
-
-        // Saving TYpeForm token
-        if ( isset( $settings[ 'typeform-personal-token' ] ) ) {
-            update_option( 'eael_save_typeform_personal_token', sanitize_text_field( $settings[ 'typeform-personal-token' ] ) );
-        }
-
-        // Saving Duplicator Settings
-        if ( isset( $settings[ 'post-duplicator-post-type' ] ) ) {
-            update_option( 'eael_save_post_duplicator_post_type', sanitize_text_field( $settings[ 'post-duplicator-post-type' ] ) );
-        }
-
-        // save js print method
-        if ( isset( $settings[ 'eael-js-print-method' ] ) ) {
-            update_option( 'eael_js_print_method', sanitize_text_field( $settings[ 'eael-js-print-method' ] ) );
-        }
-
-        $defaults = array_fill_keys( array_keys( array_merge( $this->registered_elements, $this->registered_extensions ) ), false );
-        $elements = array_merge( $defaults, array_fill_keys( array_keys( array_intersect_key( $settings, $defaults ) ), true ) );
-
-        // update new settings
-        $updated = update_option( 'eael_save_settings', $elements );
-
-        // clear assets files
-        $this->empty_dir( EAEL_ASSET_PATH );
-
-        wp_send_json( $updated );
-    }
 
     public function admin_notice() {
         $notice = new WPDeveloper_Notice( EAEL_PLUGIN_BASENAME, EAEL_PLUGIN_VERSION );
@@ -256,7 +165,7 @@ trait Admin {
                     'icon_class' => 'dashicons dashicons-external',
                 ),
                 'allready'         => array(
-                    'link'       => $url,
+                    'link'       => esc_url( $url ),
                     'label'      => __( 'I already did', 'essential-addons-for-elementor-lite' ),
                     'icon_class' => 'dashicons dashicons-smiley',
                     'data_args'  => [
@@ -264,7 +173,7 @@ trait Admin {
                     ],
                 ),
                 'maybe_later'      => array(
-                    'link'       => $url,
+                    'link'       => esc_url( $url ),
                     'label'      => __( 'Maybe Later', 'essential-addons-for-elementor-lite' ),
                     'icon_class' => 'dashicons dashicons-calendar-alt',
                     'data_args'  => [
@@ -277,7 +186,7 @@ trait Admin {
                     'icon_class' => 'dashicons dashicons-sos',
                 ),
                 'never_show_again' => array(
-                    'link'       => $url,
+                    'link'       => esc_url( $url ),
                     'label'      => __( 'Never show again', 'essential-addons-for-elementor-lite' ),
                     'icon_class' => 'dashicons dashicons-dismiss',
                     'data_args'  => [
@@ -318,4 +227,47 @@ trait Admin {
 
         $notice->init();
     }
+
+	/**
+	 * eael_admin_inline_css
+     *
+     * Admin Menu highlighted
+     * @return false
+	 * @since 5.1.0
+	 */
+	public function eael_admin_inline_css() {
+
+	    $screen = get_current_screen();
+		if ( ! empty( $screen->id ) && $screen->id == 'toplevel_page_eael-settings' ) {
+			return false;
+		}
+
+		if ( $this->menu_notice_should_show() ) {
+			$custom_css = "
+                #toplevel_page_eael-settings a ,
+                #toplevel_page_eael-settings a:hover {
+                    color:#f0f0f1 !important;
+                    background: #7D55FF !important;
+                }
+				#toplevel_page_eael-settings .eael-menu-notice {
+                    display:block !important;
+                }"
+            ;
+			wp_add_inline_style( 'admin-bar', $custom_css );
+		}
+	}
+
+	/**
+	 * menu_notice_should_show
+     *
+     * Check two flags status (eael_admin_menu_notice and eael_admin_promotion),
+     * if both true this display menu notice. it's prevent to display menu notice multiple time
+     *
+	 * @return bool
+     * @since 5.1.0
+	 */
+	public function menu_notice_should_show() {
+		return ( get_option( 'eael_admin_menu_notice' ) < self::EAEL_PROMOTION_FLAG && get_option( 'eael_admin_promotion' ) < self::EAEL_ADMIN_MENU_FLAG );
+	}
+
 }

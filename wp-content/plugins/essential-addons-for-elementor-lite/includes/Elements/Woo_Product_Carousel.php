@@ -418,6 +418,17 @@ class Woo_Product_Carousel extends Widget_Base {
 		    ]
 	    );
 
+
+        $this->add_control(
+            'eael_product_carousel_title_clickable',
+            [
+                'label' => esc_html__('Title Clickable?', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SWITCHER,
+                'return_value' => 'yes',
+                'default' => 'no',
+            ]
+        );
+
         $this->end_controls_section();
     }
     
@@ -1160,6 +1171,8 @@ class Woo_Product_Carousel extends Widget_Base {
                 ],
                 'selectors' => [
                     '{{WRAPPER}} .eael-woo-product-carousel-container .woocommerce ul.products .product .star-rating' => 'font-size: {{SIZE}}px!important;',
+                    '{{WRAPPER}} .eael-woo-product-carousel-container .woocommerce ul.products .product .star-rating::before' => 'font-size: {{SIZE}}px!important;',
+                    '{{WRAPPER}} .eael-woo-product-carousel-container .woocommerce ul.products .product .star-rating span::before' => 'font-size: {{SIZE}}px!important;',
                 ],
             
             ]
@@ -2898,7 +2911,7 @@ class Woo_Product_Carousel extends Widget_Base {
 	                if ( $query->have_posts() ):
                         echo '<div '.$this->get_render_attribute_string( 'eael-woo-product-carousel-wrap' ).'>';
                             do_action( 'eael_woo_before_product_loop' );
-                            $settings['eael_page_id'] = get_the_ID();
+		                    $settings['eael_page_id'] = $this->page_id ? $this->page_id : get_the_ID();
                             echo '<ul class="swiper-wrapper products">';
                             while ( $query->have_posts() ) {
                                 $query->the_post();
@@ -2917,8 +2930,8 @@ class Woo_Product_Carousel extends Widget_Base {
              * Render Slider Dots!
              */
 
-            if ($settings['image_dots'] === 'yes') {
-                $this->render_image_dots($args);
+            if (file_exists( $template ) && $settings['image_dots'] === 'yes') {
+                $this->render_image_dots($query);
             } else {
 	            $this->render_dots();
             }
@@ -2944,7 +2957,7 @@ class Woo_Product_Carousel extends Widget_Base {
         <?php }
     }
 
-	protected function render_image_dots($args)
+	protected function render_image_dots($query)
 	{
 		$settings = $this->get_settings_for_display();
 
@@ -2963,13 +2976,16 @@ class Woo_Product_Carousel extends Widget_Base {
 			'class' => ['swiper-container eael-woo-product-carousel-gallary-pagination', $visibility]
 		]);
 
+		if ( $settings['direction'] == 'right' ) {
+			$this->add_render_attribute( 'eael_gallery_pagination_wrapper', 'dir', 'rtl' );
+		}
+
 
 		if ($settings['image_dots'] === 'yes') : ?>
 
             <div <?php echo $this->get_render_attribute_string('eael_gallery_pagination_wrapper'); ?>>
 
             <?php
-			$query = new \WP_Query( $args );
 			if ( $query->have_posts() ) {
 				echo '<div class="swiper-wrapper">';
 				while ( $query->have_posts() ) {
@@ -3089,22 +3105,7 @@ class Woo_Product_Carousel extends Widget_Base {
 	    }
 
 	    if ( $filter == 'sale-products' ) {
-		    $count                          = isset( $args[ 'meta_query' ] ) ? count( $args[ 'meta_query' ] ) : 0;
-		    $args[ 'meta_query' ][ $count ] = [
-			    'relation' => 'OR',
-			    [
-				    'key'     => '_sale_price',
-				    'value'   => 0,
-				    'compare' => '>',
-				    'type'    => 'numeric',
-			    ],
-			    [
-				    'key'     => '_min_variation_sale_price',
-				    'value'   => 0,
-				    'compare' => '>',
-				    'type'    => 'numeric',
-			    ],
-		    ];
+		    $args['post__in'] = array_merge( [ 0 ], wc_get_product_ids_on_sale() );
 	    }
 
 

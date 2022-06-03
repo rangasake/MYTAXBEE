@@ -32,7 +32,7 @@ $integrations = [
 		'slug'     => 'easyjobs',
 		'basename' => 'easyjobs/easyjobs.php',
 		'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/ej.svg',
-		'title'    => __( 'EasyJobs', 'essential-addons-for-elementor-lite' ),
+		'title'    => __( 'easy.jobs', 'essential-addons-for-elementor-lite' ),
 		'desc'     => __( 'Easy solution for the job recruitment to attract, manage & hire right talent faster. The Best Talent Recruitment Suite which lets you manage jobs & career page in Elementor.', 'essential-addons-for-elementor-lite' ),
 	],
 	[
@@ -41,6 +41,13 @@ $integrations = [
 		'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/wscp.svg',
 		'title'    => __( 'SchedulePress', 'essential-addons-for-elementor-lite' ),
 		'desc'     => __( 'Best Content Marketing Tool For WordPress – Schedule, Organize, & Auto Share Blog Posts. Take a quick glance at your content planning with Schedule Calendar, Auto & Manual Scheduler and  more.', 'essential-addons-for-elementor-lite' ),
+	],
+	[
+		'slug'     => 'betterlinks',
+		'basename' => 'betterlinks/betterlinks.php',
+		'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/btl.svg',
+		'title'    => __( 'BetterLinks', 'essential-addons-for-elementor-lite' ),
+		'desc'     => __( 'Best Link Shortening tool to create, shorten and manage any URL to help you cross-promote your brands & products. Gather analytics reports, run successfully marketing campaigns easily & many more.', 'essential-addons-for-elementor-lite' ),
 	],
 ];
 ?>
@@ -59,14 +66,14 @@ $integrations = [
 						<?php if ( $this->installer->get_local_plugin_data( $plugin[ 'basename' ] ) === false ) { ?>
                             <a class="eael-button button__themeColor hover__shadow wpdeveloper-plugin-installer"
                                data-action="install"
-                               data-slug="<?php echo $plugin[ 'slug' ]; ?>"><?php _e( 'Install', 'essential-addons-for-elementor-lite' ); ?></a>
+                               data-slug="<?php echo esc_attr( $plugin[ 'slug' ] ); ?>"><?php _e( 'Install', 'essential-addons-for-elementor-lite' ); ?></a>
 						<?php } else { ?>
 							<?php if ( is_plugin_active( $plugin[ 'basename' ] ) ) { ?>
                                 <a class="eael-button button__white button__white-not-hover wpdeveloper-plugin-installer"><?php _e( 'Activated', 'essential-addons-for-elementor-lite' ); ?></a>
 							<?php } else { ?>
                                 <a class="eael-button button__themeColor hover__shadow wpdeveloper-plugin-installer"
                                    data-action="activate"
-                                   data-basename="<?php echo $plugin[ 'basename' ]; ?>"><?php _e( 'Activate', 'essential-addons-for-elementor-lite' ); ?></a>
+                                   data-basename="<?php echo esc_attr( $plugin[ 'basename' ] ); ?>"><?php _e( 'Activate', 'essential-addons-for-elementor-lite' ); ?></a>
 							<?php } ?>
 						<?php } ?>
                     </div>

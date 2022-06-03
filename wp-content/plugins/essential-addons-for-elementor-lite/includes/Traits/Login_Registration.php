@@ -172,13 +172,13 @@ trait Login_Registration {
 					'message' => isset( $settings['success_login'] ) ? $settings['success_login'] : __( 'You are logged in successfully', 'essential-addons-for-elementor-lite' ),
 				];
 				if ( ! empty( $_POST['redirect_to'] ) ) {
-					$data['redirect_to'] = esc_url( $_POST['redirect_to'] );
+					$data['redirect_to'] = esc_url_raw( $_POST['redirect_to'] );
 				}
 				wp_send_json_success( $data );
 			}
 
 			if ( ! empty( $_POST['redirect_to'] ) ) {
-				wp_safe_redirect( esc_url( $_POST['redirect_to'] ) );
+				wp_safe_redirect( esc_url_raw( $_POST['redirect_to'] ) );
 				exit();
 			}
 		}
@@ -297,7 +297,7 @@ trait Login_Registration {
 
 		// if user provided user name, validate & sanitize it
 		if ( isset( $_POST['user_name'] ) ) {
-			$username = $_POST['user_name'];
+			$username = sanitize_user( $_POST['user_name'] );
 			if ( ! validate_username( $username ) || mb_strlen( $username ) > 60 ) {
 				$errors['user_name'] = isset( $settings['err_username'] ) ? $settings['err_username'] : __( 'Invalid username provided.', 'essential-addons-for-elementor-lite' );
 			}elseif(username_exists( $username )){
@@ -627,12 +627,24 @@ trait Login_Registration {
 		}
 
 		if ( ! empty( self::$email_options['message'] ) ) {
+			if ( isset( self::$email_options['password_reset_link'] ) && self::$email_options['password_reset_link'] != '' ) {
+				$_message = $email_data['message'];
+				$start    = 'action=rp&key=';
+				$end      = '&login=';
+				$_message = substr( $_message, strpos( $_message, $start ) + strlen( $start ) );
+				$key      = substr( $_message, 0, strpos( $_message, $end ) );
+				if ( ! empty( $key ) ) {
+					self::$email_options['password_reset_link'] = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user->user_login ), 'login' ) . "\r\n\r\n";
+				}
+			}
 			$email_data['message'] = $this->replace_placeholders( self::$email_options['message'], 'user' );
 		}
 
 		if ( ! empty( self::$email_options['headers'] ) ) {
 			$email_data['headers'] = self::$email_options['headers'];
 		}
+
+		$email_data['message'] = wpautop( $email_data['message'] );
 
 		return apply_filters( 'eael/login-register/new-user-email-data', $email_data, $user, $blogname );
 
@@ -665,6 +677,8 @@ trait Login_Registration {
 		if ( ! empty( self::$email_options['admin_headers'] ) ) {
 			$email_data['headers'] = self::$email_options['admin_headers'];
 		}
+
+		$email_data['message'] = wpautop( $email_data['message'] );
 
 		return apply_filters( 'eael/login-register/new-user-admin-email-data', $email_data, $user, $blogname );
 	}
@@ -719,7 +733,7 @@ trait Login_Registration {
 		$endpoint = 'https://www.google.com/recaptcha/api/siteverify';
 		$data     = [
 			'secret'   => get_option( 'eael_recaptcha_secret' ),
-			'response' => $_REQUEST['g-recaptcha-response'],
+			'response' => sanitize_text_field( $_REQUEST['g-recaptcha-response'] ),
 			'ip'       => $_SERVER['REMOTE_ADDR'],
 		];
 

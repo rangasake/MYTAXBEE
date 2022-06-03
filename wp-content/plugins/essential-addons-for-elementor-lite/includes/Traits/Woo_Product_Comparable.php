@@ -1849,7 +1849,7 @@ trait Woo_Product_Comparable {
 		                                    echo '</a>';
 	                                    }
 	                                    if ( 'theme-4' === $theme ) {
-		                                    echo ! empty( $product->fields['title'] ) ? sprintf( "<p class='product-title'>%s</p>", esc_html( $product->fields['title'] ) ) : '&nbsp;';
+		                                    echo ! empty( $product->fields['title'] ) ? sprintf( "<p class='product-title'>%s</p>", HelperClass::eael_wp_kses( $product->fields['title'] ) ) : '&nbsp;';
 		                                    echo ! empty( $product->fields['price'] ) ? wp_kses_post( $product->fields['price'] ) : '&nbsp;';
 	                                    }
 	                                    echo '</span>';
@@ -1971,7 +1971,7 @@ trait Woo_Product_Comparable {
 				foreach ( $fields as $field => $name ) {
 					switch ( $field ) {
 						case 'title':
-							$product->fields[ $field ] = $product->get_title();
+							$product->fields[ $field ] = HelperClass::eael_wp_kses($product->get_title());
 							break;
 						case 'price':
 							$product->fields[ $field ] = $product->get_price_html();
@@ -2150,10 +2150,10 @@ trait Woo_Product_Comparable {
 			$p_exist = ! empty( $product_ids ) && is_array( $product_ids );
 			if ( ! empty( $_POST['remove_product'] ) && $p_exist ) {
 			    $product_ids = array_filter($product_ids, function ($id) use ($product_id){
-                    return $id != $product_id;
+                    return $id != intval( $product_id );
 			    });
 			} else {
-			    $product_ids[] = $product_id;
+			    $product_ids[] = intval( $product_id );
 			}
 		}
 
@@ -2214,7 +2214,7 @@ trait Woo_Product_Comparable {
 				foreach ( $fields as $field => $name ) {
 					switch ( $field ) {
 						case 'title':
-							$product->fields[ $field ] = $product->get_title();
+							$product->fields[ $field ] = HelperClass::eael_wp_kses($product->get_title());
 							break;
 						case 'price':
 							$product->fields[ $field ] = $product->get_price_html();

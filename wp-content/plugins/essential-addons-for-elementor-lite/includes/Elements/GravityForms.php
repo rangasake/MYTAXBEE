@@ -95,7 +95,7 @@ class GravityForms extends Widget_Base {
 	 *
 	 * @access protected
 	 */
-    protected function _register_controls() {
+    protected function register_controls() {
 
         /*-----------------------------------------------------------------------------------*/
         /*	CONTENT TAB
@@ -495,7 +495,8 @@ class GravityForms extends Widget_Base {
 				],
 				'default'               => '',
 				'selectors'             => [
-					'{{WRAPPER}} .eael-gravity-form .gform_wrapper .gform_heading' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .eael-gravity-form .gform_wrapper .gform_heading, {{WRAPPER}} .eael-gravity-form .eael-gravity-form-heading'
+                    => 'text-align: {{VALUE}};',
 				],
 			]
 		);

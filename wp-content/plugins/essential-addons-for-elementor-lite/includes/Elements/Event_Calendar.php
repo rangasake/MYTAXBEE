@@ -72,7 +72,7 @@ class Event_Calendar extends Widget_Base
         return 'https://essential-addons.com/elementor/docs/event-calendar/';
     }
 
-    protected function _register_controls()
+    protected function register_controls()
     {
         /**
          * -------------------------------------------
@@ -448,6 +448,7 @@ class Event_Calendar extends Widget_Base
                     'af' => 'Afrikaans',
                     'sq' => 'Albanian',
                     'ar' => 'Arabic',
+                    'az' => 'Azerbaijani',
                     'eu' => 'Basque',
                     'bn' => 'Bengali',
                     'bs' => 'Bosnian',
@@ -529,6 +530,21 @@ class Event_Calendar extends Widget_Base
                 'default' => 'dayGridMonth',
             ]
         );
+
+        $default_date = date('Y-m-d');
+	    $this->add_control(
+		    'eael_event_calendar_default_date',
+		    [
+			    'label' => __('Calendar Default Start Date', 'essential-addons-for-elementor-lite'),
+			    'type' => Controls_Manager::DATE_TIME,
+			    'label_block' => true,
+			    'picker_options' => [
+				    'enableTime'	=> false,
+				    'dateFormat' 	=> 'Y-m-d',
+			    ],
+			    'default' => $default_date,
+		    ]
+	    );
 
         $this->add_control(
             'eael_event_calendar_first_day',
@@ -1730,6 +1746,7 @@ class Event_Calendar extends Widget_Base
 
         $local = $settings['eael_event_calendar_language'];
         $default_view = $settings['eael_event_calendar_default_view'];
+        $default_date = $settings['eael_event_calendar_default_date'];
         $time_format = $settings['eael_event_time_format'];
         $translate_date = [
             'today' => __('Today', 'essential-addons-for-elementor-lite'),
@@ -1743,6 +1760,7 @@ class Event_Calendar extends Widget_Base
             data-locale = "' . $local . '"
             data-translate = "' . htmlspecialchars(json_encode($translate_date), ENT_QUOTES, 'UTF-8') . '"
             data-defaultview = "' . $default_view . '"
+            data-defaultdate = "' . $default_date . '"
             data-time_format = "' . $time_format . '"
             data-events="' . htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8') . '"
             data-first_day="' . $settings['eael_event_calendar_first_day'] . '"></div>
@@ -1778,7 +1796,6 @@ class Event_Calendar extends Widget_Base
         $data = [];
         if ($events) {
             $i = 0;
-
             foreach ($events as $event) {
 
                 if ($event['eael_event_all_day'] == 'yes') {
@@ -1793,6 +1810,22 @@ class Event_Calendar extends Widget_Base
                 $settings_eael_event_global_text_color = $this->fetch_color_or_global_color($event, 'eael_event_text_color');
                 $settings_eael_event_global_popup_ribbon_color = $this->fetch_color_or_global_color($event, 'eael_event_border_color');
 
+                $_custom_attributes = $event['eael_event_link']['custom_attributes'];
+                $_custom_attributes = explode(',', $_custom_attributes );
+                $custom_attributes  = [];
+
+                if ( $_custom_attributes ) {
+                    foreach ( $_custom_attributes as $attribute ) {
+                        if ( $attribute ) {
+                            $attribute_set = explode( '|', $attribute );
+                            $custom_attributes[] = [
+                                'key'   => sanitize_text_field($attribute_set[0]),
+                                'value' => isset( $attribute_set[1] ) ? sanitize_text_field($attribute_set[1]) : ''
+                            ];
+                        }
+                    }
+                }
+
                 $data[] = [
                     'id' => $i,
                     'title' => !empty($event["eael_event_title"]) ? $event["eael_event_title"] : 'No Title',
@@ -1806,6 +1839,7 @@ class Event_Calendar extends Widget_Base
                     'allDay' => $event['eael_event_all_day'],
                     'external' => $event['eael_event_link']['is_external'],
                     'nofollow' => $event['eael_event_link']['nofollow'],
+                    'custom_attributes' => $custom_attributes,
                 ];
 
                 $i++;
@@ -1972,7 +2006,7 @@ class Event_Calendar extends Widget_Base
                 'id' => ++$key,
                 'title' => !empty($event->post_title) ? $event->post_title : __('No Title',
                     'essential-addons-for-elementor-lite'),
-                'description' => $event->post_content,
+                'description' => do_shortcode($event->post_content),
                 'start' => tribe_get_start_date($event->ID, true, $date_format),
                 'end' => $end,
                 'borderColor' => !empty($settings_eael_event_global_popup_ribbon_color) ? $settings_eael_event_global_popup_ribbon_color : '#10ecab',

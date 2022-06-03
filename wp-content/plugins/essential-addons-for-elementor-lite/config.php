@@ -1063,6 +1063,11 @@ $config = [
 			        ],
 		        ],
 		        'js'  => [
+                    [
+                        'file'    => EAEL_PLUGIN_PATH . 'assets/front-end/js/lib-view/waypoint/waypoints.min.js',
+                        'type'    => 'lib',
+                        'context' => 'view',
+                    ],
 			        [
 				        'file' => EAEL_PLUGIN_PATH . 'assets/front-end/js/view/interactive-circle.min.js',
 				        'type' => 'self',
@@ -1072,10 +1077,10 @@ $config = [
 	        ],
         ],
         'better-payment' => [
-            'class' => '\Essential_Addons_Elementor\Elements\BetterPayment',
+            'class' => '\Essential_Addons_Elementor\Elements\Better_Payment',
             'condition' => [
                 'class_exists',
-                'BetterPayment',
+                'Better_Payment',
                 true,
             ],
         ],

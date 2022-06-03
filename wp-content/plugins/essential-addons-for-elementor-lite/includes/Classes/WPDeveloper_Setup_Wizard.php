@@ -50,7 +50,7 @@ class WPDeveloper_Setup_Wizard {
 			wp_enqueue_script( 'sweetalert2-core-js', EAEL_PLUGIN_URL . 'assets/admin/vendor/sweetalert2/js/core.js', array( 'jquery' ), EAEL_PLUGIN_VERSION, true );
 			wp_enqueue_script( 'essential_addons_elementor-setup-wizard-js', EAEL_PLUGIN_URL . 'assets/admin/js/admin.js', array( 'jquery' ), EAEL_PLUGIN_VERSION, true );
 			wp_localize_script( 'essential_addons_elementor-setup-wizard-js', 'localize', array(
-				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+				'ajaxurl'       => esc_url( admin_url( 'admin-ajax.php' ) ),
 				'nonce'         => wp_create_nonce( 'essential-addons-elementor' ),
 				'success_image' => EAEL_PLUGIN_URL . 'assets/admin/images/quick-setup/success.gif',
 			) );
@@ -105,12 +105,12 @@ class WPDeveloper_Setup_Wizard {
 		];
 		$i     = 0;
 		?>
-        <ul class="eael-quick-setup-wizard <?php echo $wizard_column; ?>" data-step="1">
+        <ul class="eael-quick-setup-wizard <?php echo esc_attr( $wizard_column ); ?>" data-step="1">
 			<?php foreach ( $items as $item ): ?>
 				<?php if ( $item == 'Templately' && $this->templately_status || ( $this->get_local_plugin_data( 'templately/templately.php' ) !== false && $item == 'Templately' ) ) continue; ?>
-                <li class="eael-quick-setup-step active <?php echo strtolower($item); ?>">
+                <li class="eael-quick-setup-step active <?php echo esc_attr( strtolower($item) ); ?>">
                     <div class="eael-quick-setup-icon"><?php echo ++$i; ?></div>
-                    <div class="eael-quick-setup-name"><?php echo $item; ?></div>
+                    <div class="eael-quick-setup-name"><?php echo esc_html( $item ); ?></div>
                 </li>
 			<?php endforeach; ?>
         </ul>
@@ -236,9 +236,9 @@ class WPDeveloper_Setup_Wizard {
 					$init++;
 					$disable = ( $init > 2 ) ? 'eael-quick-setup-post-grid-panel-disable' : '';
 				?>
-                    <div class="eael-quick-setup-post-grid-panel <?php echo $disable; ?>">
+                    <div class="eael-quick-setup-post-grid-panel <?php echo esc_attr( $disable ); ?>">
                         <h3 class="eael-quick-setup-post-grid-panel-title"><?php echo esc_html( $item[ 'title' ] ); ?></h3>
-                        <div class="eael-quick-setup-post-grid-wrapper eael-<?php echo $key; ?>">
+                        <div class="eael-quick-setup-post-grid-wrapper eael-<?php echo esc_attr( $key ); ?>">
 							<?php foreach ( $item[ 'elements' ] as $element ):
 								$preferences = $checked = '';
 								if ( isset( $element[ 'preferences' ] ) ) {
@@ -249,12 +249,12 @@ class WPDeveloper_Setup_Wizard {
 								}
 								?>
                                 <div class="eael-quick-setup-post-grid">
-                                    <h3 class="eael-quick-setup-title"><?php echo $element[ 'title' ]; ?></h3>
+                                    <h3 class="eael-quick-setup-title"><?php echo esc_html( $element[ 'title' ] ); ?></h3>
                                     <label class="eael-quick-setup-toggler">
-                                        <input data-preferences="<?php echo $preferences; ?>" type="checkbox"
-                                               class="eael-element" id="<?php echo $element[ 'key' ]; ?>"
-                                               name="eael_element[<?php echo $element[ 'key' ]; ?>]"
-											<?php echo $checked; ?> >
+                                        <input data-preferences="<?php echo esc_attr( $preferences ); ?>" type="checkbox"
+                                               class="eael-element" id="<?php echo esc_attr( $element[ 'key' ] ); ?>"
+                                               name="eael_element[<?php echo esc_attr( $element[ 'key' ] ); ?>]"
+											<?php echo esc_attr( $checked ); ?> >
                                         <span class="eael-quick-setup-toggler-icons"></span>
                                     </label>
                                 </div>
@@ -291,8 +291,8 @@ class WPDeveloper_Setup_Wizard {
                     <a target="_blank" href="<?php echo esc_url( $elements[ 'link' ] ); ?>"
                        class="eael-quick-setup-content">
                             <span class="eael-quick-setup-icon">
-                                <img src="<?php echo $elements[ 'logo' ]; ?>"
-                                     alt="<?php echo $elements[ 'title' ]; ?>">
+                                <img src="<?php echo esc_url( $elements[ 'logo' ] ); ?>"
+                                     alt="<?php echo esc_attr( $elements[ 'title' ] ); ?>">
                             </span>
                         <p class="eael-quick-setup-title"><?php echo esc_html( $elements[ 'title' ] ); ?></p>
                     </a>
@@ -327,7 +327,7 @@ class WPDeveloper_Setup_Wizard {
                      alt="<?php _e( 'Logo', 'essential-addons-for-elementor-lite' ) ?>">
             </div>
             <div class="eael-quick-setup-title">
-				<?php printf( __( '%s <span class="eael-quick-setup-highlighted-red">%s</span> %s', 'essential-addons-for-elementor-lite' ), 'Unlock', '1700+', 'Ready Templates Built With Elementor & Essential Addons From
+				<?php printf( __( '%s <span class="eael-quick-setup-highlighted-red">%s</span> %s', 'essential-addons-for-elementor-lite' ), 'Unlock', '2000+', 'Ready Templates Built With Elementor & Essential Addons From
                     Templately.' ); ?>
             </div>
             <div class="eael-quick-setup-text">
@@ -362,22 +362,22 @@ class WPDeveloper_Setup_Wizard {
 				<?php foreach ( $this->get_plugin_list() as $plugin ) { ?>
                     <div class=" eael-quick-setup-admin-block eael-quick-setup-admin-block-integrations">
                         <span class="eael-quick-setup-logo">
-                            <img src="<?php echo $plugin[ 'logo' ]; ?>" alt="logo"/>
+                            <img src="<?php echo esc_url( $plugin[ 'logo' ] ); ?>" alt="logo"/>
                         </span>
-                        <h4 class="eael-quick-setup-title"><?php echo $plugin[ 'title' ]; ?></h4>
-                        <p class="eael-quick-setup-text"><?php echo $plugin[ 'desc' ]; ?></p>
+                        <h4 class="eael-quick-setup-title"><?php echo esc_html( $plugin[ 'title' ] ); ?></h4>
+                        <p class="eael-quick-setup-text"><?php echo esc_textarea( $plugin[ 'desc' ] ) ; ?></p>
 
 						<?php if ( $this->get_local_plugin_data( $plugin[ 'basename' ] ) === false ) { ?>
                             <button class="wpdeveloper-plugin-installer eael-quick-setup-wpdeveloper-plugin-installer"
                                     data-action="install"
-                                    data-slug="<?php echo $plugin[ 'slug' ]; ?>"><?php _e( 'Install', 'essential-addons-for-elementor-lite' ); ?></button>
+                                    data-slug="<?php echo esc_attr( $plugin[ 'slug' ] ); ?>"><?php _e( 'Install', 'essential-addons-for-elementor-lite' ); ?></button>
 						<?php } else { ?>
 							<?php if ( is_plugin_active( $plugin[ 'basename' ] ) ) { ?>
                                 <button class="wpdeveloper-plugin-installer button__white-not-hover eael-quick-setup-wpdeveloper-plugin-installer"><?php _e( 'Activated', 'essential-addons-for-elementor-lite' ); ?></button>
 							<?php } else { ?>
                                 <button class="wpdeveloper-plugin-installer eael-quick-setup-wpdeveloper-plugin-installer"
                                         data-action="activate"
-                                        data-basename="<?php echo $plugin[ 'basename' ]; ?>"><?php _e( 'Activate', 'essential-addons-for-elementor-lite' ); ?></button>
+                                        data-basename="<?php echo esc_attr( $plugin[ 'basename' ] ); ?>"><?php _e( 'Activate', 'essential-addons-for-elementor-lite' ); ?></button>
 							<?php } ?>
 						<?php } ?>
                     </div>
@@ -461,7 +461,7 @@ class WPDeveloper_Setup_Wizard {
 				'slug'     => 'easyjobs',
 				'basename' => 'easyjobs/easyjobs.php',
 				'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/quick-setup/easy-jobs-logo.svg',
-				'title'    => __( 'EasyJobs', 'essential-addons-for-elementor-lite' ),
+				'title'    => __( 'easy.jobs', 'essential-addons-for-elementor-lite' ),
 				'desc'     => __( 'Easy solution for the job recruitment to attract, manage & hire right talent faster. The Best Talent Recruitment Suite which lets you manage jobs & career page in Elementor.', 'essential-addons-for-elementor-lite' ),
 			],
 			[
@@ -470,6 +470,13 @@ class WPDeveloper_Setup_Wizard {
 				'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/quick-setup/wscp.svg',
 				'title'    => __( 'SchedulePress', 'essential-addons-for-elementor-lite' ),
 				'desc'     => __( 'Best Content Marketing Tool For WordPress – Schedule, Organize, & Auto Share Blog Posts. Take a quick glance at your content planning with Schedule Calendar, Auto & Manual Scheduler and  more.', 'essential-addons-for-elementor-lite' ),
+			],
+			[
+				'slug'     => 'betterlinks',
+				'basename' => 'betterlinks/betterlinks.php',
+				'logo'     => EAEL_PLUGIN_URL . 'assets/admin/images/quick-setup/btl.svg',
+				'title'    => __( 'BetterLinks', 'essential-addons-for-elementor-lite' ),
+				'desc'     => __( 'Best Link Shortening tool to create, shorten and manage any URL to help you cross-promote your brands & products. Gather analytics reports, run successfully marketing campaigns easily & many more.', 'essential-addons-for-elementor-lite' ),
 			],
 		];
 	}
@@ -514,14 +521,14 @@ class WPDeveloper_Setup_Wizard {
 			return;
 		}
 
-		parse_str( $_POST[ 'fields' ], $fields );
+		wp_parse_str( $_POST[ 'fields' ], $fields );
 
 		if ( isset( $fields[ 'eael_user_email_address' ] ) && intval( $fields[ 'eael_user_email_address' ] ) == 1 ) {
 			$this->wpins_process();
 		}
 		update_option( 'eael_setup_wizard', 'complete' );
 		if ( $this->save_element_list( $fields ) ) {
-			wp_send_json_success( [ 'redirect_url' => admin_url( 'admin.php?page=eael-settings' ) ] );
+			wp_send_json_success( [ 'redirect_url' => esc_url( admin_url( 'admin.php?page=eael-settings' ) ) ] );
 		}
 		wp_send_json_error();
 	}
@@ -540,7 +547,7 @@ class WPDeveloper_Setup_Wizard {
 			return;
 		}
 
-		parse_str( $_POST[ 'fields' ], $fields );
+		wp_parse_str( $_POST[ 'fields' ], $fields );
 
 		if ( $this->save_element_list( $fields ) ) {
 			wp_send_json_success();
@@ -913,6 +920,7 @@ class WPDeveloper_Setup_Wizard {
 			'crowdfundly-single-campaign' => 1,
 			'crowdfundly-organization'    => 1,
 			'crowdfundly-all-campaign'    => 1,
+			'better-payment'              => 1,
 		];
 	}
 }

@@ -92,7 +92,7 @@ trait Generator {
 			update_option( 'eael_editor_updated_at', strtotime( 'now' ) );
 		}
 
-		if ( $elements === false ) {
+		if ( $elements === false && $post_updated_at === false ) {
 			return true;
 		}
 
@@ -236,7 +236,7 @@ trait Generator {
 
 		// output custom js as fallback
 		if ( $this->custom_js_strings ) {
-			echo '<script>' . $this->custom_js_strings . '</script>';
+			printf( '<script>%1$s</script>', $this->custom_js_strings );
 		}
 	}
 
@@ -338,15 +338,19 @@ trait Generator {
 
 		foreach ( $elements as $element ) {
 			if ( isset( $this->registered_elements[ $element ] ) ) {
-				if ( !empty( $this->registered_elements[ $element ][ 'dependency' ][ $type ] ) ) {
-					foreach ( $this->registered_elements[ $element ][ 'dependency' ][ $type ] as $file ) {
-						${$file[ 'type' ]}[ $file[ 'context' ] ][] = $file[ 'file' ];
+				if ( ! empty( $this->registered_elements[ $element ]['dependency'][ $type ] ) ) {
+					foreach ( (array) $this->registered_elements[ $element ]['dependency'][ $type ] as $file ) {
+						if ( ! empty( $file['type'] ) && ! empty( $file['context'] ) && ! empty( $file['file'] ) ) {
+							${$file['type']}[ $file['context'] ][] = $file['file'];
+						}
 					}
 				}
 			} elseif ( isset( $this->registered_extensions[ $element ] ) ) {
-				if ( !empty( $this->registered_extensions[ $element ][ 'dependency' ][ $type ] ) ) {
-					foreach ( $this->registered_extensions[ $element ][ 'dependency' ][ $type ] as $file ) {
-						${$file[ 'type' ]}[ $file[ 'context' ] ][] = $file[ 'file' ];
+				if ( ! empty( $this->registered_extensions[ $element ]['dependency'][ $type ] ) ) {
+					foreach ( (array) $this->registered_extensions[ $element ]['dependency'][ $type ] as $file ) {
+						if ( ! empty( $file['type'] ) && ! empty( $file['context'] ) && ! empty( $file['file'] ) ) {
+							${$file['type']}[ $file['context'] ][] = $file['file'];
+						}
 					}
 				}
 			}

@@ -13,15 +13,18 @@ trait Elements
 {
     public $extensions_data = [];
 
-    /**
-     * Register custom controls
-     *
-     * @since v4.4.2
-     */
-    public function register_controls($controls_manager)
-    {
-        $controls_manager->register_control('eael-select2', new \Essential_Addons_Elementor\Controls\Select2());
-    }
+	/**
+	 * Register custom controls
+	 *
+	 * @since v4.4.2
+	 */
+	public function register_controls( $controls_manager ) {
+		if ( version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
+			$controls_manager->register( new \Essential_Addons_Elementor\Controls\Select2() );
+		} else {
+			$controls_manager->register_control( 'eael-select2', new \Essential_Addons_Elementor\Controls\Select2() );
+		}
+	}
 
     /**
      * Add elementor category
@@ -330,7 +333,7 @@ trait Elements
             return;
         }
 
-        if (!is_singular()) {
+        if (!is_singular() && !is_archive()) {
             return;
         }
 
@@ -457,15 +460,15 @@ trait Elements
                     $icon = $icon_check['value'];
                 }
 
-                $table_of_content_html = "<div data-eaelTocTag='{$support_tag}' data-contentSelector='{$content_selector}' data-excludeSelector='{$exclude_selector}' data-stickyScroll='{$sticky_scroll['size']}' data-titleUrl='{$title_url}' data-page_offset='{$page_offset}' id='eael-toc' class='{$el_class} '>
+                $table_of_content_html = "<div data-eaelTocTag='".esc_attr( $support_tag )."' data-contentSelector='".esc_attr( $content_selector )."' data-excludeSelector='".esc_attr( $exclude_selector )."' data-stickyScroll='".esc_attr( $sticky_scroll['size'] )."' data-titleUrl='".esc_attr( $title_url )."' data-page_offset='".esc_attr( $page_offset )."' id='eael-toc' class='".esc_attr( $el_class )." '>
                     <div class='eael-toc-header'>
                             <span class='eael-toc-close'>×</span>
                             <h2 class='eael-toc-title'>{$toc_title}</h2>
                     </div>
                     <div class='eael-toc-body'>
-                        <ul id='eael-toc-list' class='eael-toc-list {$toc_style_class}'></ul>
+                        <ul id='eael-toc-list' class='eael-toc-list ".esc_attr( $toc_style_class )."'></ul>
                     </div>
-                    <button class='eael-toc-button'><i class='{$icon}'></i><span>{$toc_title}</span></button>
+                    <button class='eael-toc-button'><i class='".esc_attr( $icon )."'></i><span>{$toc_title}</span></button>
                 </div>";
 
                 if ($this->get_extensions_value('eael_ext_table_of_content') != 'yes') {
@@ -520,8 +523,21 @@ trait Elements
                 } else {
                     $scroll_to_top_icon_html = "<i class='$scroll_to_top_icon_image'></i>";
                 }
-
+    
                 $scroll_to_top_html = "<div class='eael-ext-scroll-to-top-wrap scroll-to-top-hide'><span class='eael-ext-scroll-to-top-button'>$scroll_to_top_icon_html</span></div>";
+
+                $scroll_to_top_global_display_condition = isset($settings_data_scroll_to_top['eael_ext_scroll_to_top_global_display_condition']) ? $settings_data_scroll_to_top['eael_ext_scroll_to_top_global_display_condition'] : 'all';
+                
+                if(isset($settings_data_scroll_to_top['post_id']) && $settings_data_scroll_to_top['post_id'] != get_the_ID()){
+                    if (get_post_status($settings_data_scroll_to_top['post_id']) != 'publish') {
+                        $scroll_to_top_html = '';
+                    } else if ($scroll_to_top_global_display_condition == 'pages' && !is_page()) {
+                            $scroll_to_top_html = '';                    
+                    } else if ($scroll_to_top_global_display_condition == 'posts' && !is_single()) {
+                            $scroll_to_top_html = '';
+                    }
+                }
+                
                 if (!empty($scroll_to_top_html)) {
                     wp_enqueue_script('eael-scroll-to-top');
                     wp_enqueue_style('eael-scroll-to-top');
@@ -530,8 +546,7 @@ trait Elements
                 }
             }
         }
-
-        echo $html;
+        printf( '%1$s', $html );
     }
 
     /**

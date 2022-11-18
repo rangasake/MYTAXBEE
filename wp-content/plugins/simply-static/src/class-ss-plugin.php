@@ -1,4 +1,5 @@
 <?php
+
 namespace Simply_Static;
 
 // Exit if accessed directly
@@ -14,7 +15,7 @@ class Plugin {
 	 * Plugin version
 	 * @var string
 	 */
-	const VERSION = '2.1.5.8';
+	const VERSION = '2.1.8';
 
 	/**
 	 * The slug of the plugin; used in actions, filters, i18n, table names, etc.
@@ -56,26 +57,28 @@ class Plugin {
 	 * Disable usage of "new"
 	 * @return void
 	 */
-	protected function __construct() {}
+	protected function __construct() {
+	}
 
 	/**
 	 * Disable cloning of the class
 	 * @return void
 	 */
-	protected function __clone() {}
+	protected function __clone() {
+	}
 
 	/**
 	 * Disable unserializing of the class
 	 * @return void
 	 */
-	public function __wakeup() {}
+	public function __wakeup() {
+	}
 
 	/**
 	 * Return an instance of the Simply Static plugin
 	 * @return Simply_Static
 	 */
-	public static function instance()
-	{
+	public static function instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 			self::$instance->includes();
@@ -100,23 +103,19 @@ class Plugin {
 			add_action( 'simply_static_site_export_cron', array( self::$instance, 'run_static_export' ) );
 
 			// Filters
-			add_filter( 'admin_footer_text', array( self::$instance, 'filter_admin_footer_text' ), 15 );
 			add_filter( 'update_footer', array( self::$instance, 'filter_update_footer' ), 15 );
-			add_filter( 'simplystatic.archive_creation_job.task_list', array( self::$instance, 'filter_task_list' ), 10, 2 );
+			add_filter( 'simplystatic.archive_creation_job.task_list', array(
+				self::$instance,
+				'filter_task_list'
+			), 10, 2 );
 
-			$direct_http_args = apply_filters( 'ss_direct_http_request_args', true );
+			add_filter( 'http_request_args', array( self::$instance, 'add_http_filters' ), 10, 2 );
 
-			if ( $direct_http_args ) {
-				add_filter( 'http_request_args', array( self::$instance, 'wpbp_http_request_args' ), 10, 2 );
-			} else {
-				add_action( 'ss_before_static_export', array( self::$instance, 'add_http_filters' ) );
-			}
-
-			self::$instance->options = Options::instance();
-			self::$instance->view = new View();
+			self::$instance->options              = Options::instance();
+			self::$instance->view                 = new View();
 			self::$instance->archive_creation_job = new Archive_Creation_Job();
 
-			$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+			$page                         = isset( $_GET['page'] ) ? $_GET['page'] : '';
 			self::$instance->current_page = $page;
 
 			Upgrade_Handler::run();
@@ -126,7 +125,7 @@ class Plugin {
 
 			if ( ! isset( $urls_to_exclude ) || empty( $urls_to_exclude ) ) {
 				$urls_to_exclude = array(
-					site_url() . DIRECTORY_SEPARATOR . 'wp-json' => array(
+					site_url() . DIRECTORY_SEPARATOR . 'wp-json'      => array(
 						'url'           => site_url() . DIRECTORY_SEPARATOR . 'wp-json',
 						'do_not_save'   => '1',
 						'do_not_follow' => '1',
@@ -140,6 +139,7 @@ class Plugin {
 				self::$instance->options->set( 'urls_to_exclude', $urls_to_exclude );
 			}
 		}
+
 		return self::$instance;
 	}
 
@@ -289,7 +289,7 @@ class Plugin {
 	 * @return void
 	 */
 	public function send_json_response_for_static_archive( $action ) {
-		$done = $this->archive_creation_job->is_job_done();
+		$done         = $this->archive_creation_job->is_job_done();
 		$current_task = $this->archive_creation_job->get_current_task();
 
 		$activity_log_html = $this->view
@@ -299,9 +299,10 @@ class Plugin {
 
 		// send json response and die()
 		wp_send_json( array(
-			'action' => $action,
+			'action'            => $action,
 			'activity_log_html' => $activity_log_html,
-			'done' => $done // $done
+			'pages_status'      => $this->options->get( 'pages_status' ),
+			'done'              => $done // $done
 		) );
 	}
 
@@ -345,10 +346,10 @@ class Plugin {
 		$static_pages = apply_filters(
 			'ss_total_pages_log',
 			Page::query()
-			->limit( $per_page )
-			->offset( $offset )
-			->order( 'http_status_code' )
-			->find()
+			    ->limit( $per_page )
+			    ->offset( $offset )
+			    ->order( 'http_status_code' )
+			    ->find()
 		);
 
 		$http_status_codes  = Page::get_http_status_codes_summary();
@@ -359,7 +360,7 @@ class Plugin {
 			->set_template( '_export_log' )
 			->assign( 'static_pages', $static_pages )
 			->assign( 'http_status_codes', $http_status_codes )
-			->assign( 'current_page' , $current_page )
+			->assign( 'current_page', $current_page )
 			->assign( 'total_pages', $total_pages )
 			->assign( 'total_static_pages', $total_static_pages )
 			->render_to_string();
@@ -410,6 +411,8 @@ class Plugin {
 			->assign( 'local_dir', $this->options->get( 'local_dir' ) )
 			->assign( 'destination_url_type', $this->options->get( 'destination_url_type' ) )
 			->assign( 'use_cron', $this->options->get( 'use_cron' ) )
+			->assign( 'force_replace_url', $this->options->get( 'force_replace_url' ) )
+			->assign( 'clear_directory_before_export', $this->options->get( 'clear_directory_before_export' ) )
 			->assign( 'relative_path', $this->options->get( 'relative_path' ) )
 			->assign( 'http_basic_auth_digest', $this->options->get( 'http_basic_auth_digest' ) )
 			->render();
@@ -427,18 +430,18 @@ class Plugin {
 
 		if ( $destination_url_type == 'offline' ) {
 			$destination_scheme = '';
-			$destination_host = '.';
+			$destination_host   = '.';
 		} else if ( $destination_url_type == 'relative' ) {
 			$destination_scheme = '';
-			$destination_host = '';
+			$destination_host   = '';
 		} else {
 			$destination_scheme = $this->fetch_post_value( 'destination_scheme' );
-			$destination_host = untrailingslashit( $this->fetch_post_value( 'destination_host' ) );
+			$destination_host   = untrailingslashit( $this->fetch_post_value( 'destination_host' ) );
 		}
 
 		// Set URLs to exclude
 		$urls_to_exclude = array();
-		$excludables = $this->fetch_post_array_value( 'excludable' );
+		$excludables     = $this->fetch_post_array_value( 'excludable' );
 
 		foreach ( $excludables as $excludable ) {
 			$url = trim( $excludable['url'] );
@@ -454,7 +457,7 @@ class Plugin {
 		}
 
 		$system_excludables = array(
-			site_url() . DIRECTORY_SEPARATOR . 'wp-json' => array(
+			site_url() . DIRECTORY_SEPARATOR . 'wp-json'      => array(
 				'url'           => site_url() . DIRECTORY_SEPARATOR . 'wp-json',
 				'do_not_save'   => '1',
 				'do_not_follow' => '1',
@@ -496,17 +499,19 @@ class Plugin {
 		$options = apply_filters(
 			'simply_static_options',
 			array(
-				'destination_scheme'   => $destination_scheme,
-				'destination_host'     => $destination_host,
-				'temp_files_dir'       => Util::trailingslashit_unless_blank( $this->fetch_post_value( 'temp_files_dir' ) ),
-				'additional_urls'      => $this->fetch_post_value( 'additional_urls' ),
-				'additional_files'     => $this->fetch_post_value( 'additional_files' ),
-				'urls_to_exclude'      => $urls_to_exclude,
-				'delivery_method'      => $this->fetch_post_value( 'delivery_method' ),
-				'local_dir'            => Util::trailingslashit_unless_blank( $this->fetch_post_value( 'local_dir' ) ),
-				'destination_url_type' => $destination_url_type,
-				'relative_path'        => $relative_path,
-				'use_cron'             => $this->fetch_post_value( 'use_cron' ),
+				'destination_scheme'            => $destination_scheme,
+				'destination_host'              => $destination_host,
+				'temp_files_dir'                => Util::trailingslashit_unless_blank( $this->fetch_post_value( 'temp_files_dir' ) ),
+				'additional_urls'               => $this->fetch_post_value( 'additional_urls' ),
+				'additional_files'              => $this->fetch_post_value( 'additional_files' ),
+				'urls_to_exclude'               => $urls_to_exclude,
+				'delivery_method'               => $this->fetch_post_value( 'delivery_method' ),
+				'local_dir'                     => Util::trailingslashit_unless_blank( $this->fetch_post_value( 'local_dir' ) ),
+				'destination_url_type'          => $destination_url_type,
+				'relative_path'                 => $relative_path,
+				'use_cron'                      => $this->fetch_post_value( 'use_cron' ),
+				'force_replace_url'             => $this->fetch_post_value( 'force_replace_url' ),
+				'clear_directory_before_export' => $this->fetch_post_value( 'clear_directory_before_export' ),
 			)
 		);
 
@@ -531,15 +536,15 @@ class Plugin {
 			$this->email_debug_log();
 		}
 
-		$debug_file = Util::get_debug_log_filename();
+		$debug_file        = Util::get_debug_log_filename();
 		$debug_file_exists = file_exists( $debug_file );
-		$debug_file_url = plugin_dir_url( dirname( __FILE__ ) ) . basename( $debug_file );
+		$debug_file_url    = plugin_dir_url( dirname( __FILE__ ) ) . basename( $debug_file );
 
 		$diagnostic = new Diagnostic();
-		$results = $diagnostic->results;
+		$results    = $diagnostic->results;
 
-		$themes = wp_get_themes();
-		$current_theme = wp_get_theme();
+		$themes             = wp_get_themes();
+		$current_theme      = wp_get_theme();
 		$current_theme_name = $current_theme->name;
 
 		$plugins = get_plugins();
@@ -585,7 +590,7 @@ class Plugin {
 			$email = $this->fetch_post_value( 'email_address' );
 
 			$zip_filename = $debug_file . '.zip';
-			$zip_archive = new \PclZip( $zip_filename );
+			$zip_archive  = new \PclZip( $zip_filename );
 
 			if ( $zip_archive->create( $debug_file, PCLZIP_OPT_REMOVE_ALL_PATH ) === 0 ) {
 				$message = __( 'Unable to create a ZIP of the debug log.', 'simply-static' );
@@ -616,13 +621,13 @@ class Plugin {
 		$content = "<div class='center'>";
 
 		$content .= "<table width='600'>"
-			. "<tr><td><b>URL:</b></td><td>"            . get_bloginfo( 'url' )             . "</td></tr>"
-			. "<tr><td><b>WP URL:</b></td><td>"         . get_bloginfo( 'wpurl' )           . "</td></tr>"
-			. "<tr><td><b>Plugin Version:</b></td><td>" . Plugin::VERSION                   . "</td></tr>"
-			. "<tr><td><b>WP Version:</b></td><td>"     . get_bloginfo( 'version' )         . "</td></tr>"
-			. "<tr><td><b>Multisite:</b></td><td>"      . ( is_multisite() ? 'yes' : 'no' ) . "</td></tr>"
-			. "<tr><td><b>Admin Email:</b></td><td>"    . get_bloginfo( 'admin_email' )     . "</td></tr>"
-			. "</table><br />";
+		            . "<tr><td><b>URL:</b></td><td>" . get_bloginfo( 'url' ) . "</td></tr>"
+		            . "<tr><td><b>WP URL:</b></td><td>" . get_bloginfo( 'wpurl' ) . "</td></tr>"
+		            . "<tr><td><b>Plugin Version:</b></td><td>" . Plugin::VERSION . "</td></tr>"
+		            . "<tr><td><b>WP Version:</b></td><td>" . get_bloginfo( 'version' ) . "</td></tr>"
+		            . "<tr><td><b>Multisite:</b></td><td>" . ( is_multisite() ? 'yes' : 'no' ) . "</td></tr>"
+		            . "<tr><td><b>Admin Email:</b></td><td>" . get_bloginfo( 'admin_email' ) . "</td></tr>"
+		            . "</table><br />";
 
 		$content .= "<table width='600'><thead><tr><th>Settings</th></tr></thead><tbody><tr><td><pre>";
 		$options = get_option( Plugin::SLUG );
@@ -630,7 +635,7 @@ class Plugin {
 		$content .= "</pre></td></tr></tbody></table><br />";
 
 		$diagnostic = new Diagnostic();
-		$results = $diagnostic->results;
+		$results    = $diagnostic->results;
 
 		foreach ( $results as $title => $tests ) {
 			$content .= "<table width='600'><thead><tr><th colspan='2'>" . $title . "</th></tr></thead><tbody>";
@@ -642,21 +647,21 @@ class Plugin {
 					$content .= "<td style='color: #dc143c; font-weight: bold;'>" . $result['message'] . "</td>";
 				}
 				$content .= "</tr>";
-				}
+			}
 			$content .= "</tbody></table><br />";
 		}
 
-		$themes = wp_get_themes();
-		$current_theme = wp_get_theme();
+		$themes             = wp_get_themes();
+		$current_theme      = wp_get_theme();
 		$current_theme_name = $current_theme->name;
 
 		$content .= "<table width='600'><thead><tr><th>Theme Name</th><th>Theme URL</th><th>Version</th><th>Enabled</th></tr></thead><tbody>";
 		foreach ( $themes as $theme ) {
 			$content .= "<tr>";
-			$content .= "<td width='20%'>" . $theme->get( 'Name') . "</td>";
-			$content .= "<td width='60%'><a href='" . $theme->get( 'ThemeURI') . "'>" . $theme->get( 'ThemeURI') . "</a></td>";
-			$content .= "<td width='10%'>" . $theme->get( 'Version') . "</td>";
-			if ( $theme->get( 'Name') === $current_theme_name ) {
+			$content .= "<td width='20%'>" . $theme->get( 'Name' ) . "</td>";
+			$content .= "<td width='60%'><a href='" . $theme->get( 'ThemeURI' ) . "'>" . $theme->get( 'ThemeURI' ) . "</a></td>";
+			$content .= "<td width='10%'>" . $theme->get( 'Version' ) . "</td>";
+			if ( $theme->get( 'Name' ) === $current_theme_name ) {
 				$content .= "<td width='10%' style='color: #008000; font-weight: bold;'>Yes</td>";
 			} else {
 				$content .= "<td width='10%' style='color: #dc143c; font-weight: bold;'>No</td>";
@@ -670,9 +675,9 @@ class Plugin {
 		$content .= "<table width='600'><thead><tr><th>Plugin Name</th><th>Plugin URL</th><th>Version</th><th>Enabled</th></tr></thead><tbody>";
 		foreach ( $plugins as $plugin_path => $plugin_data ) {
 			$content .= "<tr>";
-			$content .= "<td width='20%'>" . $plugin_data[ 'Name' ] . "</td>";
-			$content .= "<td width='60%'><a href='" . $plugin_data[ 'PluginURI' ] . "'>" . $plugin_data[ 'PluginURI' ] . "</a></td>";
-			$content .= "<td width='10%'>" . $plugin_data[ 'Version' ] . "</td>";
+			$content .= "<td width='20%'>" . $plugin_data['Name'] . "</td>";
+			$content .= "<td width='60%'><a href='" . $plugin_data['PluginURI'] . "'>" . $plugin_data['PluginURI'] . "</a></td>";
+			$content .= "<td width='10%'>" . $plugin_data['Version'] . "</td>";
 			if ( is_plugin_active( $plugin_path ) ) {
 				$content .= "<td width='10%' style='color: #008000; font-weight: bold;'>Yes</td>";
 			} else {
@@ -696,21 +701,26 @@ class Plugin {
 
 	/**
 	 * Fetch a POST variable by name and sanitize it
-	 * @param  string $variable_name Name of the POST variable to fetch
+	 *
+	 * @param string $variable_name Name of the POST variable to fetch
+	 *
 	 * @return string                Value of the POST variable
 	 */
 	public function fetch_post_value( $variable_name ) {
 		$input = filter_input( INPUT_POST, $variable_name );
+
 		// using explode/implode to keep linebreaks in text areas
 		return implode( "\n", array_map( 'sanitize_text_field', explode( "\n", $input ) ) );
 	}
 
 	/**
 	 * Fetch a POST array variable by name and sanitize it
-	 * @param  string $variable_name Name of the POST variable to fetch
+	 *
+	 * @param string $variable_name Name of the POST variable to fetch
+	 *
 	 * @return string                Value of the POST variable
 	 */
-	public function fetch_post_array_value( $variable_name) {
+	public function fetch_post_array_value( $variable_name ) {
 		return filter_input( INPUT_POST, $variable_name, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 	}
 
@@ -751,38 +761,22 @@ class Plugin {
 	 * @return string
 	 */
 	public function filter_wp_mail_content_type() {
-	    return 'text/html';
+		return 'text/html';
 	}
 
 	/**
 	 * Set HTTP Basic Auth for wp-background-processing
 	 */
-	public function wpbp_http_request_args( $r, $url ) {
-		$digest = self::$instance->options->get( 'http_basic_auth_digest' );
-		if ( $digest ) {
-			$r['headers']['Authorization'] = 'Basic ' . $digest;
-		}
-		return $r;
-	}
+	public function add_http_filters( $parsed_args, $url ) {
+		if ( strpos( $url, get_bloginfo( 'url' ) ) !== false ) {
+			$digest = self::$instance->options->get( 'http_basic_auth_digest' );
 
-	/**
-	 * Display support text in footer when on plugin page
-	 * @return string
-	 */
-	public function filter_admin_footer_text( $text ) {
-		if ( ! self::$instance->in_plugin() ) {
-			return $text;
+			if ( $digest ) {
+				$parsed_args['headers']['Authorization'] = 'Basic ' . $digest;
+			}
 		}
 
-		$contact_support = '<a target="_blank" href="https://wordpress.org/support/plugin/simply-static#new-post">'
-			. __( 'Contact Support', 'simply-static' ) . '</a> | ';
-		$add_your_rating = str_replace(
-				'[stars]',
-				'<a target="_blank" href="https://wordpress.org/support/plugin/simply-static/reviews/#new-post" >&#9733;&#9733;&#9733;&#9733;&#9733;</a>',
-				__( 'Enjoying Simply Static? Add your [stars] on wordpress.org.', 'simply-static' )
-			);
-
-		return $contact_support . $add_your_rating;
+		return $parsed_args;
 	}
 
 	/**
@@ -801,8 +795,10 @@ class Plugin {
 
 	/**
 	 * Return the task list for the Archive Creation Job to process
-	 * @param  array  $task_list       The list of tasks to process
-	 * @param  string $delivery_method The method of delivering static files
+	 *
+	 * @param array $task_list The list of tasks to process
+	 * @param string $delivery_method The method of delivering static files
+	 *
 	 * @return array                   The list of tasks to process
 	 */
 	public function filter_task_list( $task_list, $delivery_method ) {
@@ -834,15 +830,6 @@ class Plugin {
 	}
 
 	/**
-	 * Remove Basic Auth when Updraft backup is in process
-	 *
-	 * @return void
-	 */
-	public function add_http_filters() {
-		add_filter( 'http_request_args', array( self::$instance, 'wpbp_http_request_args' ), 10, 2 );
-	}
-
-	/**
 	 * Add information links in admin header.
 	 *
 	 * @return void
@@ -850,8 +837,8 @@ class Plugin {
 	public function add_info_links( $info_text ) {
 		ob_start();
 		?>
+        <a href="https://patrickposner.dev/docs/simply-static/" target="_blank">Documentation</a>
         <a href="https://patrickposner.dev/plugins/simply-static" target="_blank">Simply Static Pro</a>
-        <a href="https://simplycdn.io" target="_blank">Simply CDN</a>
 		<?php
 		$info_text = apply_filters( 'simply_static_info_links', ob_get_clean() );
 		echo $info_text;

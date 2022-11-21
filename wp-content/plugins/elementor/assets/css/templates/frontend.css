@@ -109,6 +109,17 @@
   color: #39b54a;
 }
 
+#e-kit-elements-defaults-create-dialog .dialog-ok {
+  color: #39b54a;
+}
+#e-kit-elements-defaults-create-dialog label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .dialog-prevent-scroll {
   overflow: hidden;
   max-height: 100vh;
@@ -2027,8 +2038,6 @@ ul.elementor-icon-list-items.elementor-inline-items .elementor-inline-item {
 }
 .elementor-field-group .elementor-select-wrapper select {
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -2163,15 +2172,15 @@ ul.elementor-icon-list-items.elementor-inline-items .elementor-inline-item {
     flex-basis: 100%;
   }
   .elementor-tablet-button-align-center .elementor-field-type-submit,
-.elementor-tablet-button-align-center .e-form__buttons {
+  .elementor-tablet-button-align-center .e-form__buttons {
     justify-content: center;
   }
   .elementor-tablet-button-align-start .elementor-field-type-submit,
-.elementor-tablet-button-align-start .e-form__buttons {
+  .elementor-tablet-button-align-start .e-form__buttons {
     justify-content: flex-start;
   }
   .elementor-tablet-button-align-end .elementor-field-type-submit,
-.elementor-tablet-button-align-end .e-form__buttons {
+  .elementor-tablet-button-align-end .e-form__buttons {
     justify-content: flex-end;
   }
   .elementor-tablet-button-align-center .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button, .elementor-tablet-button-align-start .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button, .elementor-tablet-button-align-end .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button {
@@ -2196,15 +2205,15 @@ ul.elementor-icon-list-items.elementor-inline-items .elementor-inline-item {
     flex-basis: 100%;
   }
   .elementor-mobile-button-align-center .elementor-field-type-submit,
-.elementor-mobile-button-align-center .e-form__buttons {
+  .elementor-mobile-button-align-center .e-form__buttons {
     justify-content: center;
   }
   .elementor-mobile-button-align-start .elementor-field-type-submit,
-.elementor-mobile-button-align-start .e-form__buttons {
+  .elementor-mobile-button-align-start .e-form__buttons {
     justify-content: flex-start;
   }
   .elementor-mobile-button-align-end .elementor-field-type-submit,
-.elementor-mobile-button-align-end .e-form__buttons {
+  .elementor-mobile-button-align-end .e-form__buttons {
     justify-content: flex-end;
   }
   .elementor-mobile-button-align-center .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button, .elementor-mobile-button-align-start .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button, .elementor-mobile-button-align-end .elementor-field-type-submit:not(.e-form__buttons__wrapper) .elementor-button {
@@ -2599,8 +2608,6 @@ button.swiper-pagination-bullet {
   padding: 0;
   box-shadow: none;
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 .swiper-pagination-clickable .swiper-pagination-bullet {
@@ -3407,11 +3414,11 @@ button.swiper-pagination-bullet {
 }
 @media (max-width: ELEMENTOR_SCREEN_TABLET_MAX) {
   .e--ua-appleWebkit .elementor-widget-social-icons.e-grid-align-tablet-right,
-.e--ua-appleWebkit .elementor-share-buttons-tablet--align-right {
+  .e--ua-appleWebkit .elementor-share-buttons-tablet--align-right {
     --justify-content: var(--flex-right, flex-end);
   }
   .e--ua-appleWebkit .elementor-widget-social-icons.e-grid-align-tablet-center,
-.e--ua-appleWebkit .elementor-share-buttons-tablet--align-center {
+  .e--ua-appleWebkit .elementor-share-buttons-tablet--align-center {
     --justify-content: center;
   }
   .e--ua-appleWebkit .elementor-grid-0.elementor-widget-social-icons.e-grid-align-tablet-right .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-widget-social-icons.e-grid-align-tablet-center .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-tablet-right .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-tablet-center .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-tablet-justify .elementor-grid {
@@ -3436,11 +3443,11 @@ button.swiper-pagination-bullet {
 }
 @media (max-width: ELEMENTOR_SCREEN_MOBILE_MAX) {
   .e--ua-appleWebkit .elementor-widget-social-icons.e-grid-align-mobile-right,
-.e--ua-appleWebkit .elementor-share-buttons-mobile--align-right {
+  .e--ua-appleWebkit .elementor-share-buttons-mobile--align-right {
     --justify-content: var(--flex-right, flex-end);
   }
   .e--ua-appleWebkit .elementor-widget-social-icons.e-grid-align-mobile-center,
-.e--ua-appleWebkit .elementor-share-buttons-mobile--align-center {
+  .e--ua-appleWebkit .elementor-share-buttons-mobile--align-center {
     --justify-content: center;
   }
   .e--ua-appleWebkit .elementor-grid-0.elementor-widget-social-icons.e-grid-align-mobile-right .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-widget-social-icons.e-grid-align-mobile-center .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-mobile-right .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-mobile-center .elementor-grid, .e--ua-appleWebkit .elementor-grid-0.elementor-share-buttons--align-mobile-justify .elementor-grid {
@@ -5067,7 +5074,7 @@ body.elementor-page .elementor-widget-menu-anchor {
 
 @media (max-width: ELEMENTOR_SCREEN_MOBILE_MAX) {
   .elementor-tabs .elementor-tab-title,
-.elementor-tabs .elementor-tab-content {
+  .elementor-tabs .elementor-tab-content {
     border-style: solid;
     border-bottom-style: none;
   }
